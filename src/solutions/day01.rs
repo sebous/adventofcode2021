@@ -1,7 +1,7 @@
 use crate::lib::input;
 
 pub fn run() {
-    let input = input::load_input("inputs/01");
+    let input = input::load_input("01");
     println!("{}", input);
 }
 
