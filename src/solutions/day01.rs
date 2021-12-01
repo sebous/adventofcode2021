@@ -9,8 +9,8 @@ fn parse_input() -> Vec<usize> {
 
 fn part_one(input: &Vec<usize>) -> usize {
     let mut counter = 0;
-    for (i, item) in input.iter().enumerate() {
-        if i > 0 && item > &input[i - 1] {
+    for i in 0..input.len() {
+        if i > 0 && input[i] > input[i - 1] {
             counter += 1;
         }
     }
