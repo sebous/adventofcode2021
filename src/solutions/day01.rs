@@ -9,8 +9,8 @@ fn parse_input() -> Vec<usize> {
 
 fn part_one(input: &Vec<usize>) -> usize {
     let mut counter = 0;
-    for i in 0..input.len() {
-        if i > 0 && input[i] > input[i - 1] {
+    for i in 1..input.len() {
+        if input[i] > input[i - 1] {
             counter += 1;
         }
     }
@@ -19,11 +19,7 @@ fn part_one(input: &Vec<usize>) -> usize {
 
 fn part_two(input: &Vec<usize>) -> usize {
     let mut counter = 0;
-    for i in 0..input.len() {
-        if i == 0 || input.len() <= i + 2 {
-            continue;
-        }
-
+    for i in 1..input.len() - 2 {
         let a = input[i - 1] + input[i] + input[i + 1];
         let b = input[i] + input[i + 1] + input[i + 2];
 
