@@ -39,8 +39,10 @@ fn part_two(input: &Vec<(String, usize)>) -> usize {
 pub fn run() {
     let input: Vec<(String, usize)> = load_input("02")
         .lines()
-        .map(|l| l.split_once(" ").unwrap())
-        .map(|(command, size)| (command.to_owned(), size.parse().unwrap()))
+        .map(|l| {
+            let (command, size) = l.split_once(" ").unwrap();
+            (command.to_owned(), size.parse().unwrap())
+        })
         .collect();
 
     let one = part_one(&input);
