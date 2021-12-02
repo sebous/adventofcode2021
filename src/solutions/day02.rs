@@ -36,6 +36,7 @@ fn part_two(input: &Vec<(String, usize)>) -> usize {
     distance * depth
 }
 
+#[allow(dead_code)]
 pub fn run() {
     let input: Vec<(String, usize)> = load_input("02")
         .lines()

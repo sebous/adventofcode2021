@@ -30,6 +30,7 @@ fn part_two(input: &Vec<usize>) -> usize {
     counter
 }
 
+#[allow(dead_code)]
 pub fn run() {
     let input = parse_input();
 
