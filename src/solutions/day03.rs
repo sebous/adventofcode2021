@@ -68,7 +68,6 @@ fn part_one(input: &Vec<Vec<char>>) -> usize {
 fn part_two(input: &Vec<Vec<char>>) -> usize {
     let oxygen = filter_by_criteria(input, true);
     let co2 = filter_by_criteria(input, false);
-    println!("{} {}", co2, oxygen);
     co2 * oxygen
 }
 
