@@ -81,5 +81,5 @@ pub fn run() {
     println!("part 1: {}", p1);
 
     let p2 = part_two(&input);
-    print!("part 2: {}", p2);
+    println!("part 2: {}", p2);
 }
