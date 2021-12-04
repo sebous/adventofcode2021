@@ -60,21 +60,20 @@ fn check_columns(board: &Board, played_numbers: &Vec<usize>) -> bool {
             return true;
         }
     }
-
     false
 }
 
 fn get_result(i: usize, boards: &Vec<Board>, played_numbers: &Vec<usize>) -> usize {
-    let unmarker_numbers_sum: usize = boards
+    let unmarked_numbers_sum = boards
         .iter()
         .nth(i)
         .unwrap()
         .iter()
         .flatten()
         .filter(|num| !played_numbers.contains(*num))
-        .sum();
+        .sum::<usize>();
 
-    unmarker_numbers_sum * played_numbers.last().unwrap()
+    unmarked_numbers_sum * played_numbers.last().unwrap()
 }
 
 fn part_one(game_numbers: &Vec<usize>, boards: &Vec<Board>) {
