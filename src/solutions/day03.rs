@@ -13,7 +13,7 @@ fn get_nth_column_bit(input: &Vec<Vec<char>>, n: usize) -> char {
         sum += input[y][n].to_digit(10).unwrap() as usize;
     }
 
-    if sum as f32 >= (input.len() as f32) / 2.0 {
+    if sum as f32 >= (input.len() as f32) / 2f32 {
         return '1';
     } else {
         return '0';
