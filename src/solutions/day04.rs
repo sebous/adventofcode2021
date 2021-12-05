@@ -60,6 +60,7 @@ fn check_columns(board: &Board, played_numbers: &Vec<usize>) -> bool {
             return true;
         }
     }
+
     false
 }
 
