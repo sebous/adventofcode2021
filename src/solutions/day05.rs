@@ -49,17 +49,23 @@ enum Direction {
     DIAGONAL,
 }
 
+impl Direction {
+    fn get_variant(((x1, y1), (x2, y2)): &Path) -> Self {
+        if y1 == y2 && x1 != x2 {
+            Direction::HORIZONTAL
+        } else if x1 == x2 && y1 != y2 {
+            Direction::VERTICAL
+        } else if (*x1 as i32 - *x2 as i32).abs() == (*y1 as i32 - *y2 as i32).abs() {
+            Direction::DIAGONAL
+        } else {
+            panic!("not implemented line direction found!");
+        }
+    }
+}
+
 fn get_coords_on_path(path: &Path) -> Vec<Coord> {
     let ((x1, y1), (x2, y2)) = path;
-    let direction: Direction = if y1 == y2 && x1 != x2 {
-        Direction::HORIZONTAL
-    } else if x1 == x2 && y1 != y2 {
-        Direction::VERTICAL
-    } else if (*x1 as i32 - *x2 as i32).abs() == (*y1 as i32 - *y2 as i32).abs() {
-        Direction::DIAGONAL
-    } else {
-        panic!("not implemented line direction found!");
-    };
+    let direction: Direction = Direction::get_variant(path);
 
     let (low_x, high_x) = if x1 < x2 { (x1, x2) } else { (x2, x1) };
     let (low_y, high_y) = if y1 < y2 { (y1, y2) } else { (y2, y1) };
@@ -81,7 +87,6 @@ fn get_coords_on_path(path: &Path) -> Vec<Coord> {
             }
         }
     };
-
     range
 }
 
@@ -90,7 +95,11 @@ fn part_one(lines: &Vec<Path>) -> usize {
 
     lines
         .into_iter()
-        .filter(|((x1, y1), (x2, y2))| x1 == x2 || y1 == y2)
+        .filter(|path| match Direction::get_variant(path) {
+            Direction::HORIZONTAL => true,
+            Direction::VERTICAL => true,
+            _ => false,
+        })
         .for_each(|path| {
             let coords_on_path = get_coords_on_path(path);
             write_coords_to_grid(&coords_on_path, &mut grid);
