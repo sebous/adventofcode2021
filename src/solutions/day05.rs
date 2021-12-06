@@ -21,7 +21,7 @@ struct A {
 fn parse_input() -> Vec<Path> {
     let input = load_input("05");
 
-    let i: Vec<A> = input.lines().map(|line| line.parse().unwrap()).collect();
+    // let i: Vec<A> = input.lines().map(|line| line.parse().unwrap()).collect();
     let coord_regex = Regex::new(r"(\d+,\d+)").unwrap();
     let lines: Vec<Path> = input
         .lines()
