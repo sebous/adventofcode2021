@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use parse_display::{Display, FromStr};
 use regex::Regex;
 
 use crate::lib::input::load_input;
@@ -8,8 +9,19 @@ use itertools::*;
 type Coord = (usize, usize);
 type Path = (Coord, Coord);
 
+#[derive(Display, Debug, FromStr)]
+#[display("{x1},{y1} -> {x2},{y2}")]
+struct A {
+    x1: usize,
+    y1: usize,
+    x2: usize,
+    y2: usize,
+}
+
 fn parse_input() -> Vec<Path> {
     let input = load_input("05");
+
+    let i: Vec<A> = input.lines().map(|line| line.parse().unwrap()).collect();
     let coord_regex = Regex::new(r"(\d+,\d+)").unwrap();
     let lines: Vec<Path> = input
         .lines()
@@ -30,16 +42,6 @@ fn parse_input() -> Vec<Path> {
         .collect();
 
     lines
-}
-
-fn write_coords_to_grid(coords: &Vec<Coord>, grid: &mut HashMap<Coord, usize>) {
-    for coord in coords.iter() {
-        if let Some(point) = grid.get_mut(coord) {
-            *point += 1;
-        } else {
-            grid.insert(*coord, 1);
-        }
-    }
 }
 
 #[derive(Debug)]
@@ -101,8 +103,9 @@ fn part_one(lines: &Vec<Path>) -> usize {
             _ => false,
         })
         .for_each(|path| {
-            let coords_on_path = get_coords_on_path(path);
-            write_coords_to_grid(&coords_on_path, &mut grid);
+            get_coords_on_path(path)
+                .iter()
+                .for_each(|coord| *grid.entry(*coord).or_insert(0) += 1);
         });
 
     grid.iter().filter(|(_, val)| *val >= &2).count()
@@ -112,8 +115,9 @@ fn part_two(lines: &Vec<(Coord, Coord)>) -> usize {
     let mut grid: HashMap<Coord, usize> = HashMap::new();
 
     lines.into_iter().for_each(|path| {
-        let coords_on_path = get_coords_on_path(path);
-        write_coords_to_grid(&coords_on_path, &mut grid);
+        get_coords_on_path(path)
+            .iter()
+            .for_each(|coord| *grid.entry(*coord).or_insert(0) += 1);
     });
 
     grid.iter().filter(|(_, val)| *val >= &2).count()

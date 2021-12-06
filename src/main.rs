@@ -5,5 +5,6 @@ fn main() {
     // solutions::day02::run();
     // solutions::day03::run();
     // solutions::day04::run();
-    solutions::day05::run();
+    // solutions::day05::run();
+    solutions::day06::run();
 }
