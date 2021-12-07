@@ -7,6 +7,18 @@ fn parse_input() -> Vec<u8> {
     input.split(",").map(|n| n.parse::<u8>().unwrap()).collect()
 }
 
+#[allow(dead_code)]
+fn fish_generations_v2(input: &Vec<u8>, days: usize) -> usize {
+    let mut fish = [0; 9];
+    input.iter().for_each(|n| fish[*n as usize] += 1);
+
+    for _ in 0..days {
+        fish.rotate_left(1);
+        fish[6] += fish[8];
+    }
+    fish.iter().sum()
+}
+
 fn fish_generations(input: &Vec<u8>, days: usize) -> usize {
     let mut generation = HashMap::new();
     input.iter().for_each(|num| {
