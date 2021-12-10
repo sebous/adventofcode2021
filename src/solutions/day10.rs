@@ -75,14 +75,11 @@ fn autocomplete_score(result: &ProcessResult) -> u64 {
 }
 
 fn part_one(input: &Vec<Vec<char>>) -> u64 {
-    input.iter().fold(0, |acc, line| {
-        let res = process_syntax(line);
-        if res.err_score > 0 {
-            acc + res.err_score
-        } else {
-            acc
-        }
-    })
+    input
+        .iter()
+        .map(|line| process_syntax(line))
+        .filter(|r| r.error)
+        .fold(0, |acc, r| acc + r.err_score)
 }
 
 fn part_two(input: &Vec<Vec<char>>) -> u64 {
