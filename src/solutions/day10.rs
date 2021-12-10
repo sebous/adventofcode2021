@@ -5,8 +5,8 @@ use crate::lib::input::load_input;
 fn parse_input() -> Vec<Vec<char>> {
     load_input("10")
         .lines()
-        .map(|l| l.chars().collect())
-        .collect::<Vec<Vec<char>>>()
+        .map(|l| l.chars().collect_vec())
+        .collect()
 }
 
 fn get_oposite_symbol(symbol: &char) -> char {
@@ -19,16 +19,6 @@ fn get_oposite_symbol(symbol: &char) -> char {
         '}' => '{',
         '<' => '>',
         '>' => '<',
-        _ => unreachable!("invalid symbol"),
-    }
-}
-
-fn get_error_score(symbol: &char) -> u64 {
-    match symbol {
-        ')' => 3,
-        ']' => 57,
-        '}' => 1197,
-        '>' => 25137,
         _ => unreachable!("invalid symbol"),
     }
 }
@@ -46,14 +36,19 @@ fn process_syntax(tree: &Vec<char>) -> ProcessResult {
         match symbol {
             '[' | '(' | '{' | '<' => stack.push(*symbol),
             _ => {
-                if stack[stack.len() - 1] == get_oposite_symbol(symbol) {
+                if stack.iter().last().unwrap() == &get_oposite_symbol(symbol) {
                     stack.pop();
-                    continue;
                 } else {
                     return ProcessResult {
                         stack: stack.clone(),
                         error: true,
-                        err_score: get_error_score(symbol),
+                        err_score: match symbol {
+                            ')' => 3,
+                            ']' => 57,
+                            '}' => 1197,
+                            '>' => 25137,
+                            _ => unreachable!("invalid symbol"),
+                        },
                     };
                 }
             }
@@ -67,9 +62,7 @@ fn process_syntax(tree: &Vec<char>) -> ProcessResult {
 }
 
 fn autocomplete_score(result: &ProcessResult) -> u64 {
-    let mut score = 0;
-    println!("{:?}", result);
-    for symbol in result.stack.iter().rev() {
+    result.stack.iter().rev().fold(0, |acc, symbol| {
         let symbol_score = match get_oposite_symbol(symbol) {
             ')' => 1,
             ']' => 2,
@@ -77,9 +70,8 @@ fn autocomplete_score(result: &ProcessResult) -> u64 {
             '>' => 4,
             _ => unreachable!("nah"),
         };
-        score = score * 5 + symbol_score;
-    }
-    score
+        acc * 5 + symbol_score
+    })
 }
 
 fn part_one(input: &Vec<Vec<char>>) -> u64 {
