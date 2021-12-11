@@ -9,21 +9,13 @@ use crate::lib::{
 
 #[derive(Debug, Clone)]
 struct OctopusState {
-    pub value: usize,
+    value: usize,
     flashed: bool,
 }
 
-impl fmt::Display for Grid<OctopusState> {
+impl fmt::Display for OctopusState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut result = String::new();
-        for y in 0..self.height {
-            for x in 0..self.width {
-                let val = self.map.get(&(x, y)).unwrap().value;
-                result.push_str(&val.to_string());
-            }
-            result.push_str("\n");
-        }
-        write!(f, "{}", result)
+        write!(f, "{}", self.value)
     }
 }
 
@@ -118,14 +110,14 @@ fn part_one(grid: &Grid<OctopusState>) -> usize {
 fn part_two(grid: &Grid<OctopusState>) -> usize {
     let mut grid = grid.clone();
     let oct_count = grid.height * grid.width;
-    let mut i = 0;
+    let mut i = 1;
 
     loop {
-        i += 1;
         let flashes = grid.step();
         if flashes == oct_count {
             break;
         }
+        i += 1;
     }
     i
 }

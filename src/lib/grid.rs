@@ -1,6 +1,9 @@
-use std::{collections::HashMap, ops::Range};
+use std::{
+    collections::HashMap,
+    fmt::{self, Display},
+};
 
-use itertools::{Itertools, Product};
+use itertools::Itertools;
 
 pub type Coord = (usize, usize);
 #[derive(Debug, Clone, PartialEq)]
@@ -53,8 +56,22 @@ impl<T> Grid<T> {
         [a, b, c, d, e, f, g, h].into_iter()
     }
 
-    pub fn iter_coords(&self) -> Product<Range<usize>, Range<usize>> {
-        (0..self.width).cartesian_product(0..self.height)
+    pub fn iter_coords(&self) -> impl Iterator<Item = Coord> {
+        (0..self.width).cartesian_product(0..self.height).sorted()
+    }
+}
+
+impl<T: Display> fmt::Display for Grid<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = String::new();
+        for y in 0..self.height {
+            for x in 0..self.width {
+                let val = self.map.get(&(x, y)).unwrap();
+                result.push_str(format!("{}", val).as_str());
+            }
+            result.push_str("\n");
+        }
+        write!(f, "{}", result)
     }
 }
 
