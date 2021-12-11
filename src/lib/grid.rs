@@ -19,7 +19,7 @@ impl<T> Grid<T> {
         &self,
         coord: &Coord,
         diagonals: bool,
-    ) -> impl Iterator<Item = Option<Coord>> {
+    ) -> impl Iterator<Item = Coord> {
         let (x, y) = coord;
         let a = match *x != 0 && *y != 0 && diagonals {
             true => Some((x - 1, y - 1)),
@@ -53,7 +53,12 @@ impl<T> Grid<T> {
             true => Some((x - 1, *y)),
             false => None,
         };
-        [a, b, c, d, e, f, g, h].into_iter()
+        let existing = [a, b, c, d, e, f, g, h]
+            .iter()
+            .filter_map(|item| *item)
+            .collect_vec();
+
+        existing.into_iter()
     }
 
     pub fn iter_coords(&self) -> impl Iterator<Item = Coord> {
@@ -76,7 +81,7 @@ impl<T: Display> fmt::Display for Grid<T> {
 }
 
 #[cfg(test)]
-mod tests {
+mod grid_tests {
     use std::collections::HashMap;
 
     use itertools::Itertools;
@@ -106,30 +111,22 @@ mod tests {
         let grid = grid_test_init();
 
         assert_eq!(
-            grid.get_adjacent_coords(&(1, 1), false)
-                .filter_map(|c| c)
-                .collect_vec(),
+            grid.get_adjacent_coords(&(1, 1), false).collect_vec(),
             vec![(1, 0), (2, 1), (1, 2), (0, 1)]
         );
 
         assert_eq!(
-            grid.get_adjacent_coords(&(0, 1), false)
-                .filter_map(|c| c)
-                .collect_vec(),
+            grid.get_adjacent_coords(&(0, 1), false).collect_vec(),
             vec![(0, 0), (1, 1), (0, 2)]
         );
 
         assert_eq!(
-            grid.get_adjacent_coords(&(2, 2), false)
-                .filter_map(|c| c)
-                .collect_vec(),
+            grid.get_adjacent_coords(&(2, 2), false).collect_vec(),
             vec![(2, 1), (1, 2)]
         );
 
         assert_eq!(
-            grid.get_adjacent_coords(&(1, 1), true)
-                .filter_map(|c| c)
-                .collect_vec(),
+            grid.get_adjacent_coords(&(1, 1), true).collect_vec(),
             vec![
                 (0, 0),
                 (1, 0),
@@ -143,22 +140,16 @@ mod tests {
         );
 
         assert_eq!(
-            grid.get_adjacent_coords(&(0, 0), true)
-                .filter_map(|c| c)
-                .collect_vec(),
+            grid.get_adjacent_coords(&(0, 0), true).collect_vec(),
             vec![(1, 0), (1, 1), (0, 1)]
         );
 
         assert_eq!(
-            grid.get_adjacent_coords(&(2, 1), true)
-                .filter_map(|c| c)
-                .collect_vec(),
+            grid.get_adjacent_coords(&(2, 1), true).collect_vec(),
             vec![(1, 0), (2, 0), (2, 2), (1, 2), (1, 1)]
         );
         assert_eq!(
-            grid.get_adjacent_coords(&(2, 2), true)
-                .filter_map(|c| c)
-                .collect_vec(),
+            grid.get_adjacent_coords(&(2, 2), true).collect_vec(),
             vec![(1, 1), (2, 1), (1, 2)]
         );
     }
