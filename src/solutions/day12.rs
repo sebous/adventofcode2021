@@ -41,61 +41,45 @@ fn find_paths_recursively(
             true => match next_loc_count > 0 {
                 // loc was already visited
                 true => match small_visited.is_none() && next_loc_count < small_visited_limit {
-                    true => match find_paths_recursively(
-                        next_loc,
-                        &path_buffer,
-                        subpaths,
-                        small_visited_limit,
-                        Some(next_loc),
-                    ) {
-                        Some(x) => {
-                            possibilities.extend(x);
-                        }
-                        None => (),
-                    },
+                    true => {
+                        find_paths_recursively(
+                            next_loc,
+                            &path_buffer,
+                            subpaths,
+                            small_visited_limit,
+                            Some(next_loc),
+                        )
+                        .map(|x| possibilities.extend(x));
+                    }
                     false => (),
                 },
                 // not visited
                 false => {
-                    match find_paths_recursively(
+                    find_paths_recursively(
                         next_loc,
                         &path_buffer,
                         subpaths,
                         small_visited_limit,
                         small_visited,
-                    ) {
-                        Some(x) => {
-                            possibilities.extend(x);
-                        }
-                        None => (),
-                    }
+                    )
+                    .map(|x| possibilities.extend(x));
                 }
             },
             // uppercase
             false => {
-                match find_paths_recursively(
+                find_paths_recursively(
                     next_loc,
                     &path_buffer,
                     subpaths,
                     small_visited_limit,
                     small_visited,
-                ) {
-                    Some(x) => {
-                        possibilities.extend(x);
-                    }
-                    None => (),
-                }
+                )
+                .map(|x| possibilities.extend(x));
             }
         }
     }
 
-    Some(
-        possibilities
-            .iter()
-            .filter(|p| p.contains(&"end".to_string()))
-            .cloned()
-            .collect_vec(),
-    )
+    Some(possibilities)
 }
 
 pub fn run() {
