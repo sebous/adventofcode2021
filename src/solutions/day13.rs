@@ -46,12 +46,16 @@ fn parse() -> (Grid<char>, Vec<Instr>) {
 fn fold(grid: &mut Grid<char>, axis: char, value: usize) {
     let folding = grid
         .map
-        .keys()
-        .filter(|(x, y)| match axis {
-            'x' => x > &value,
-            'y' => y > &value,
-            _ => unreachable!(),
+        .iter()
+        .filter(|((x, y), char)| {
+            let axis_match = match axis {
+                'x' => x > &value,
+                'y' => y > &value,
+                _ => unreachable!(),
+            };
+            axis_match && *char == &'#'
         })
+        .map(|(coord, _)| coord)
         .cloned()
         .collect_vec();
 
