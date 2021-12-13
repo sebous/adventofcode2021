@@ -83,9 +83,7 @@ fn fold(grid: &mut Grid<char>, axis: char, value: usize) {
 }
 
 fn part_one(grid: &mut Grid<char>, instructions: &Vec<Instr>) {
-    // println!("{}", grid);
     fold(grid, instructions[0].0, instructions[0].1);
-    // println!("{}", grid);
     println!(
         "part 1: {}",
         grid.map.values().filter(|sym| *sym == &'#').count()
