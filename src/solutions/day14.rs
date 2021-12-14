@@ -1,11 +1,11 @@
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
 
 use itertools::Itertools;
 
 use crate::lib::input::load_input;
 
-type Template = BTreeMap<(char, char), usize>;
-type Rules = BTreeMap<(char, char), char>;
+type Template = HashMap<(char, char), usize>;
+type Rules = HashMap<(char, char), char>;
 
 fn parse() -> (Template, Rules) {
     let input = load_input("14");
@@ -31,7 +31,7 @@ fn parse() -> (Template, Rules) {
 }
 
 fn polymerize(template: &Template, rules: &Rules) -> Template {
-    let mut result = BTreeMap::new();
+    let mut result = HashMap::new();
 
     for (&pair @ (a, b), n) in template {
         if let Some(&c) = rules.get(&pair) {
@@ -45,7 +45,7 @@ fn polymerize(template: &Template, rules: &Rules) -> Template {
 }
 
 fn count_difference(template: &Template) -> usize {
-    let mut items = BTreeMap::new();
+    let mut items = HashMap::new();
     for (&(a, b), &count) in template {
         *items.entry(a).or_insert(0) += count;
         *items.entry(b).or_insert(0) += count;
@@ -55,7 +55,7 @@ fn count_difference(template: &Template) -> usize {
 
 fn part_one() -> usize {
     let (template, rules) = parse();
-    let result = (0..2).fold(template, |acc, _| polymerize(&acc, &rules));
+    let result = (0..10).fold(template, |acc, _| polymerize(&acc, &rules));
     count_difference(&result)
 }
 
