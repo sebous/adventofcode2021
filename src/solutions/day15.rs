@@ -64,7 +64,10 @@ fn shortest_path(grid: &Grid<usize>, target: &Coord) -> usize {
             }
 
             if edge.cost <= *costs.get(&edge.coord).unwrap_or(&usize::MAX) {
-                for adjacent in grid.get_adjacent_coords(&edge.coord, false) {
+                for adjacent in grid
+                    .get_adjacent_coords(&edge.coord, false)
+                    .filter_map(|x| x)
+                {
                     let next_edge = Edge {
                         cost: edge.cost + grid.map.get(&adjacent).unwrap(),
                         coord: adjacent,

@@ -37,6 +37,7 @@ impl Grid<OctopusState> {
 
         flashing.clone().for_each(|(coord, _)| {
             self.get_adjacent_coords(&coord, true)
+                .filter_map(|c| c)
                 .filter(|coord| !self.map.get(coord).unwrap().flashed)
                 .for_each(|coord| *affected_octs.entry(coord).or_insert(0) += 1)
         });
