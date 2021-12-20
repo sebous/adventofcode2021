@@ -21,49 +21,45 @@ impl<T> Grid<T> {
         diagonals: bool,
     ) -> impl Iterator<Item = Option<Coord>> {
         let (x, y) = coord;
-        let (min_x, min_y) = self.get_min_coord();
-        let left_top = match *x != 0 && *y != 0 && diagonals {
+        let a = match *x != 0 && *y != 0 && diagonals {
             true => Some((x - 1, y - 1)),
             false => None,
         };
-        let top = match *y != 0 {
+        let b = match *y != 0 {
             true => Some((*x, y - 1)),
             false => None,
         };
-        let right_top = match *x + 1 < (self.width + min_x) && *y != 0 && diagonals {
+        let c = match *x + 1 < self.width && *y != 0 && diagonals {
             true => Some((x + 1, y - 1)),
             false => None,
         };
-        let right = match *x + 1 < (self.width + min_x) {
+        let d = match *x + 1 < self.width {
             true => Some((x + 1, *y)),
             false => None,
         };
-        let right_bot =
-            match *x + 1 < (self.width + min_x) && *y + 1 < (self.height + min_y) && diagonals {
-                true => Some((x + 1, y + 1)),
-                false => None,
-            };
-        let bot = match *y + 1 < (self.height + min_y) {
+        let e = match *x + 1 < self.width && *y + 1 < self.height && diagonals {
+            true => Some((x + 1, y + 1)),
+            false => None,
+        };
+        let f = match *y + 1 < self.height {
             true => Some((*x, y + 1)),
             false => None,
         };
-        let left_bot = match *x != 0 && *y + 1 < (self.height + min_y) && diagonals {
+        let g = match *x != 0 && *y + 1 < self.height && diagonals {
             true => Some((x - 1, y + 1)),
             false => None,
         };
-        let left = match *x != 0 {
+        let h = match *x != 0 {
             true => Some((x - 1, *y)),
             false => None,
         };
-        let existing = [
-            left_top, top, right_top, left, right, left_bot, bot, right_bot,
-        ];
+        let existing = [a, b, c, d, e, f, g, h];
+
         existing.into_iter()
+    }
 
-        // .filter_map(|item| *item)
-        // .collect_vec();
-
-        // existing.into_iter()
+    pub fn iter_coords(&self) -> impl Iterator<Item = Coord> {
+        (0..self.width).cartesian_product(0..self.height).sorted()
     }
 
     pub fn get_min_coord(&self) -> Coord {
@@ -101,21 +97,13 @@ impl<T> Grid<T> {
             .1;
         (max_x, max_y)
     }
-
-    pub fn iter_coords(&self) -> impl Iterator<Item = Coord> {
-        let (min_x, min_y) = self.get_min_coord();
-        (min_x..self.width + min_x)
-            .cartesian_product(min_y..self.height + min_y)
-            .sorted()
-    }
 }
 
 impl<T: Display> fmt::Display for Grid<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut result = String::new();
-        let (min_x, min_y) = self.get_min_coord();
-        for y in min_y..self.height + min_y {
-            for x in min_x..self.width + min_x {
+        for y in 0..self.height {
+            for x in 0..self.width {
                 let val = self.map.get(&(x, y)).unwrap();
                 result.push_str(format!("{}", val).as_str());
             }
@@ -151,66 +139,65 @@ mod grid_tests {
         assert_eq!(grid.iter_coords().last().unwrap(), (2, 2));
     }
 
-    // #[test]
-    // fn get_adjacent() {
-    //     let grid = grid_test_init();
+    #[test]
+    fn get_adjacent() {
+        let grid = grid_test_init();
 
-    //     assert_eq!(
-    //         grid.get_adjacent_coords(&(1, 1), false)
-    //             .filter_map(|x| x)
-    //             .sorted()
-    //             .collect_vec(),
-    //         vec![(1, 0), (2, 1), (1, 2), (0, 1)]
-    //     );
+        assert_eq!(
+            grid.get_adjacent_coords(&(1, 1), false)
+                .filter_map(|x| x)
+                .collect_vec(),
+            vec![(1, 0), (2, 1), (1, 2), (0, 1)]
+        );
 
-    //     assert_eq!(
-    //         grid.get_adjacent_coords(&(0, 1), false)
-    //             .filter_map(|x| x)
-    //             .collect_vec(),
-    //         vec![(0, 0), (1, 1), (0, 2)]
-    //     );
+        assert_eq!(
+            grid.get_adjacent_coords(&(0, 1), false)
+                .filter_map(|x| x)
+                .collect_vec(),
+            vec![(0, 0), (1, 1), (0, 2)]
+        );
 
-    //     assert_eq!(
-    //         grid.get_adjacent_coords(&(2, 2), false)
-    //             .filter_map(|x| x)
-    //             .collect_vec(),
-    //         vec![(2, 1), (1, 2)]
-    //     );
+        assert_eq!(
+            grid.get_adjacent_coords(&(2, 2), false)
+                .filter_map(|x| x)
+                .collect_vec(),
+            vec![(2, 1), (1, 2)]
+        );
 
-    //     assert_eq!(
-    //         grid.get_adjacent_coords(&(1, 1), true)
-    //             .filter_map(|x| x)
-    //             .collect_vec(),
-    //         vec![
-    //             (0, 0),
-    //             (1, 0),
-    //             (2, 0),
-    //             (2, 1),
-    //             (2, 2),
-    //             (1, 2),
-    //             (0, 2),
-    //             (0, 1)
-    //         ]
-    //     );
+        assert_eq!(
+            grid.get_adjacent_coords(&(1, 1), true)
+                .filter_map(|x| x)
+                .collect_vec(),
+            vec![
+                (0, 0),
+                (1, 0),
+                (2, 0),
+                (2, 1),
+                (2, 2),
+                (1, 2),
+                (0, 2),
+                (0, 1)
+            ]
+        );
 
-    //     assert_eq!(
-    //         grid.get_adjacent_coords(&(0, 0), true)
-    //             .filter_map(|x| x)
-    //             .collect_vec(),
-    //         vec![(1, 0), (1, 1), (0, 1)]
-    //     );
+        assert_eq!(
+            grid.get_adjacent_coords(&(0, 0), true)
+                .filter_map(|x| x)
+                .collect_vec(),
+            vec![(1, 0), (1, 1), (0, 1)]
+        );
 
-    //     assert_eq!(
-    //         grid.get_adjacent_coords(&(2, 1), true)
-    //             .filter_map(|x| x)
-    //             .collect_vec(),
-    //         vec![(1, 0), (2, 0), (2, 2), (1, 2), (1, 1)]
-    //     );
-    //     assert_eq!(
-    //         grid.get_adjacent_coords(&(2, 2), true)
-    //             .filter_map(|x| x)
-    //             .collect_vec(),
-    //         vec![(1, 1), (2, 1), (1, 2)]
-    //     );
-    // }
+        assert_eq!(
+            grid.get_adjacent_coords(&(2, 1), true)
+                .filter_map(|x| x)
+                .collect_vec(),
+            vec![(1, 0), (2, 0), (2, 2), (1, 2), (1, 1)]
+        );
+        assert_eq!(
+            grid.get_adjacent_coords(&(2, 2), true)
+                .filter_map(|x| x)
+                .collect_vec(),
+            vec![(1, 1), (2, 1), (1, 2)]
+        );
+    }
 }
