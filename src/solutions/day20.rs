@@ -23,8 +23,8 @@ fn parse() -> (Grid<u8>, Vec<u8>) {
         })
         .collect_vec();
 
-    let mut width = input.lines().skip(2).next().unwrap().chars().count();
-    let mut height = input.lines().skip(2).count();
+    let width = input.lines().skip(2).next().unwrap().chars().count();
+    let height = input.lines().skip(2).count();
 
     let mut map = HashMap::new();
 
@@ -64,7 +64,7 @@ pub fn get_all_adjacent(&(x, y): &Coord) -> impl Iterator<Item = Coord> {
     .into_iter()
 }
 
-fn pass(input: &Grid<u8>, alg: &Vec<u8>) -> Grid<u8> {
+fn pass(input: &Grid<u8>, alg: &Vec<u8>, default: char) -> Grid<u8> {
     let (min_x, min_y) = input.get_min_coord();
     let mut output_map = HashMap::new();
 
@@ -72,11 +72,13 @@ fn pass(input: &Grid<u8>, alg: &Vec<u8>) -> Grid<u8> {
         let b_code = get_all_adjacent(&c)
             .map(|adj_c| match input.map.get(&adj_c) {
                 Some(1) => '1',
-                _ => '0',
+                Some(0) => '0',
+                _ => default,
             })
             .collect::<String>();
 
-        let value = alg[bin_to_dec(&b_code)];
+        let dec_val = bin_to_dec(&b_code);
+        let value = alg[dec_val];
 
         output_map.insert(c, value);
     }
@@ -89,12 +91,24 @@ fn pass(input: &Grid<u8>, alg: &Vec<u8>) -> Grid<u8> {
 }
 
 fn part_one(grid: &Grid<u8>, alg: &Vec<u8>) {
-    println!("{}", grid);
-    let g = pass(&grid, alg);
-    println!("{}", g);
-    let g2 = pass(&g, alg);
-    println!("{}", g2);
-    println!("{}", g2.map.values().filter(|v| *v == &1u8).count());
+    let mut grid = grid.clone();
+    let mut default = '0';
+    for i in 0..50 {
+        grid = pass(&grid, alg, default);
+
+        if i == 1 {
+            println!(
+                "part 1: {}",
+                grid.map.values().filter(|v| *v == &1u8).count()
+            );
+        }
+
+        default = if default == '0' { '1' } else { '0' };
+    }
+    println!(
+        "part 2: {}",
+        grid.map.values().filter(|v| *v == &1u8).count()
+    );
 }
 
 pub fn run() {
