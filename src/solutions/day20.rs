@@ -45,10 +45,6 @@ fn parse() -> (Grid<u8>, Vec<u8>) {
     (Grid { map, width, height }, alg)
 }
 
-fn bin_to_dec(str: &str) -> usize {
-    usize::from_str_radix(str, 2).unwrap()
-}
-
 pub fn get_all_adjacent(&(x, y): &Coord) -> impl Iterator<Item = Coord> {
     [
         (x - 1, y - 1),
@@ -77,7 +73,7 @@ fn pass(input: &Grid<u8>, alg: &Vec<u8>, default: char) -> Grid<u8> {
             })
             .collect::<String>();
 
-        let dec_val = bin_to_dec(&b_code);
+        let dec_val = usize::from_str_radix(&b_code, 2).unwrap();
         let value = alg[dec_val];
 
         output_map.insert(c, value);
